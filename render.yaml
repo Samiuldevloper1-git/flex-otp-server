@@ -1,0 +1,41 @@
+# ============================================================
+# Flex OTP Service — Render Deployment Config
+# Deploy at: https://render.com
+# ============================================================
+
+services:
+  - type: web
+    name: flex-otp-service
+    runtime: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn main:app --host 0.0.0.0 --port $PORT
+    healthCheckPath: /health
+    envVars:
+      - key: SECRET_KEY
+        generateValue: true
+      - key: DEBUG
+        value: "false"
+      - key: DATABASE_URL
+        value: "sqlite+aiosqlite:///./flex_otp.db"
+      - key: SMTP_HOST
+        value: smtp.gmail.com
+      - key: SMTP_PORT
+        value: "587"
+      - key: EMAIL_USER
+        value: flexotpservice@gmail.com
+      - key: EMAIL_APP_PASSWORD
+        sync: false   # Set manually in Render dashboard
+      - key: SENDER_NAME
+        value: "Flex OTP Service"
+      - key: OTP_EXPIRY_SECONDS
+        value: "300"
+      - key: OTP_COOLDOWN_SECONDS
+        value: "60"
+      - key: ADMIN_USERNAME
+        value: flexadmin
+      - key: ADMIN_PASSWORD
+        sync: false   # Set manually in Render dashboard
+    disk:
+      name: flex-otp-db
+      mountPath: /app
+      sizeGB: 1
